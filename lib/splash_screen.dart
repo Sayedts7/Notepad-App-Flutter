@@ -14,7 +14,7 @@ class _SplashState extends State<Splash> {
   void initState() {
   // TODO: implement initState
   super.initState();
-  Timer(const Duration(seconds: 3), () => Navigator.push(context, MaterialPageRoute(builder: (context)=>HomeScreen()))  );
+  Timer(const Duration(seconds: 3), () => Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>HomeScreen()))  );
 
   }
   @override
@@ -22,7 +22,7 @@ class _SplashState extends State<Splash> {
     return Scaffold(
       body: Center(
         child: Container(
-          child: Text('abc', style: TextStyle(fontSize: 50),),
+          child: Text('NotePad App', style: TextStyle(fontSize: 50, fontWeight: FontWeight.bold),),
         ),
       ),
     );

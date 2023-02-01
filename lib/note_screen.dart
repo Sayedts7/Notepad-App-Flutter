@@ -44,7 +44,7 @@ class _Note_screenState extends State<Note_screen> {
               final snackBar = SnackBar(backgroundColor: Colors.red ,content: Text('Deleted'.toString()), duration: Duration(seconds: 1));
 
               ScaffoldMessenger.of(context).showSnackBar(snackBar);
-              Navigator.push(context, MaterialPageRoute(builder: (context)=> HomeScreen()));
+              Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=> HomeScreen()));
             });
           }, icon: Icon(Icons.delete),) :
           IconButton(onPressed: () {
@@ -57,7 +57,7 @@ class _Note_screenState extends State<Note_screen> {
                       description: descriptioncontroller.text, picture: '')
               ).then((value){
                 const snackBar = SnackBar(backgroundColor: Colors.green,content: Text('Saved'), duration: Duration(seconds: 1),);
-                Navigator.push(context, MaterialPageRoute(builder: (context)=>HomeScreen()));
+                Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>HomeScreen()));
                 setState(() {
 
                 });

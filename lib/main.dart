@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:notepad/home_screen.dart';
+import 'package:notepad/splash_screen.dart';
 import 'package:notepad/theme_change_provider.dart';
 import 'package:notepad/theme_change_provider.dart';
 import 'package:notepad/theme_change_provider.dart';
@@ -41,7 +42,7 @@ class MyApp extends StatelessWidget {
                   darkTheme: ThemeData(
                     brightness: Brightness.dark
                   ),
-                  home: const HomeScreen(),
+                  home: const Splash(),
                   debugShowCheckedModeBanner: false,
                   );
                   },),);

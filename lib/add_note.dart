@@ -35,7 +35,7 @@ class _AddNoteState extends State<AddNote> {
                 description: descriptioncontroller.text, picture: '')
           ).then((value){
                 final snackBar = SnackBar(backgroundColor: Colors.green,content: Text('Saved'), duration: Duration(seconds: 1),);
-                Navigator.push(context, MaterialPageRoute(builder: (context)=>HomeScreen()));
+                Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>HomeScreen()));
                 setState(() {
 
                 });

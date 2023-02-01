@@ -116,6 +116,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: Container(
                   height: 40,
                   child: TextFormField(
+                    style: TextStyle(color: Colors.black),
                     onChanged: (value){
                       setState(() {
 
@@ -167,284 +168,40 @@ class _HomeScreenState extends State<HomeScreen> {
                             reverse: true,
                               itemCount: snapshot.data!.length,
                               itemBuilder: (context, index){
+
                                 String title = snapshot.data![index].title.toString();
                                 String des = snapshot.data![index].description.toString();
+                                String time = snapshot.data![index].time.toString();
                                 String all = title + des;
                                 var id = snapshot.data![index].id;
                                 if(searchcontroller.text.isEmpty)
                                   {
-                                    if(index % 2 == 0){
-                                      return InkWell(
-                                        onTap: () {
-                                          Navigator.push(context,
-                                              MaterialPageRoute(builder: (context) =>
-                                                  Note_screen(id:
-                                                  int.parse(snapshot.data![index].id.toString()),
-                                                      time: snapshot.data![index].time
-                                                          .toString(),
-                                                      description: snapshot.data![index]
-                                                          .description.toString(),
-                                                      title: snapshot.data![index].title
-                                                          .toString())));
-                                        },
-                                        child: Dismissible(
-
-                                          key: UniqueKey(),
-                                          onDismissed: (direction) {
-
-                                            dbHelper!.delete(id!);
-
-
-                                          },
-                                          background: Container(
-                                            color: Colors.grey,
-                                            child: Icon(Icons.delete),
-                                          ),
-                                          child: Card(
-                                            color: Colors.red.shade300,
-                                            child: Container(
-                                              height: MediaQuery.of(context).size.height * 0.13,
-                                              width:  MediaQuery.of(context).size.height * 1,
-                                              decoration: BoxDecoration(
-                                                  color: Colors.red.shade300,
-                                                  borderRadius: BorderRadius.circular(20)
-                                              ),
-                                              child: Padding(
-                                                padding: const EdgeInsets.all(10.0),
-                                                child: Column(
-                                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                                  children: [
-
-                                                    Container(
-                                                      height: MediaQuery.of(context).size.height * 0.03,
-
-                                                      child: Text(
-                                                        overflow: TextOverflow.ellipsis,
-
-                                                        snapshot.data![index].title.toString(), style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),),
-                                                    ),
-                                                    Container(
-                                                      height: MediaQuery.of(context).size.height * 0.03,
-                                                      child: Text(
-                                                        overflow: TextOverflow.fade,
-
-                                                        snapshot.data![index].description.toString(),  style: TextStyle(fontSize: 16, ),),
-                                                    ),
-                                                    Text(snapshot.data![index].time.toString(),  style: TextStyle(color: Colors.black45 ),),
-
-                                                  ],
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      );
-                                    }
-                                    else{
-                                      return InkWell(
-                                        onTap: () {
-                                          Navigator.push(context,
-                                              MaterialPageRoute(builder: (context) =>
-                                                  Note_screen(id:
-                                                  int.parse(snapshot.data![index].id.toString()),
-                                                      time: snapshot.data![index].time
-                                                          .toString(),
-                                                      description: snapshot.data![index]
-                                                          .description.toString(),
-                                                      title: snapshot.data![index].title
-                                                          .toString())));
-                                        },
-                                        child: Dismissible(
-                                          key: UniqueKey(),
-                                          onDismissed: (direction) {
-
-                                            dbHelper!.delete(id!);
-
-
-                                          },
-                                          background: Container(
-                                            color: Colors.grey,
-                                            child: Icon(Icons.delete),
-                                          ),
-                                          child: Card(
-                                            color: Colors.green.shade300,
-                                            child: Container(
-                                              height: MediaQuery.of(context).size.height * 0.13,
-                                              width:  MediaQuery.of(context).size.height * 1,
-                                              decoration: BoxDecoration(
-                                                  color: Colors.green.shade300,
-                                                  borderRadius: BorderRadius.circular(20)
-                                              ),
-                                              child: Padding(
-                                                padding: const EdgeInsets.all(10.0),
-                                                child: Column(
-                                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                                  children: [
-
-                                                    Container(
-                                                      height: MediaQuery.of(context).size.height * 0.03,
-
-                                                      child: Text(
-                                                        overflow: TextOverflow.ellipsis,
-
-                                                        snapshot.data![index].title.toString(), style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),),
-                                                    ),
-                                                    Container(
-                                                      height: MediaQuery.of(context).size.height * 0.03,
-
-                                                      child: Text(
-                                                        overflow: TextOverflow.ellipsis,
-
-                                                        snapshot.data![index].description.toString(),  style: TextStyle(fontSize: 16, ),),
-                                                    ),
-                                                    Text(snapshot.data![index].time.toString(),  style: TextStyle(color: Colors.black45 ),),
-
-                                                  ],
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      );
-                                    }
+                                    return InkWell(
+                                      onTap: () {
+                                        Navigator.pushReplacement(context,
+                                            MaterialPageRoute(builder: (context) =>
+                                                Note_screen(id:
+                                                int.parse(id.toString()),
+                                                    time: time,
+                                                    description: des,
+                                                    title: title)));
+                                      },
+                                      child: Reusable(id: id!, title: title, time: time, description: des),
+                                    );
 
                                   }else if (all.toLowerCase().contains(searchcontroller.text.toLowerCase())){
-                                  if(index % 2 == 0){
-                                    return InkWell(
-                                      onTap: () {
-                                        Navigator.push(context,
-                                            MaterialPageRoute(builder: (context) =>
-                                                Note_screen(id:
-                                                int.parse(snapshot.data![index].id.toString()),
-                                                    time: snapshot.data![index].time
-                                                        .toString(),
-                                                    description: snapshot.data![index]
-                                                        .description.toString(),
-                                                    title: snapshot.data![index].title
-                                                        .toString())));
-                                      },
-                                      child: Dismissible(
-                                        key: UniqueKey(),
-                                        onDismissed: (direction) {
-
-                                          dbHelper!.delete(id!);
-
-
-                                        },
-                                        background: Container(
-                                          color: Colors.grey,
-                                          child: Icon(Icons.delete),
-                                        ),
-                                        child: Card(
-                                          color: Colors.red.shade300,
-                                          child: Container(
-                                            height: MediaQuery.of(context).size.height * 0.13,
-                                            width:  MediaQuery.of(context).size.height * 1,
-                                            decoration: BoxDecoration(
-                                                color: Colors.red.shade300,
-                                                borderRadius: BorderRadius.circular(20)
-                                            ),
-                                            child: Padding(
-                                              padding: const EdgeInsets.all(10.0),
-                                              child: Column(
-                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                crossAxisAlignment: CrossAxisAlignment.start,
-                                                children: [
-
-                                                  Container(
-                                                    height: MediaQuery.of(context).size.height * 0.03,
-                                                    child: Text(
-                                                      overflow: TextOverflow.ellipsis,
-
-                                                      snapshot.data![index].title.toString(), style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),),
-                                                  ),
-                                                  Container(
-                                                    height: MediaQuery.of(context).size.height * 0.03,
-                                                    child: Text(
-                                                      overflow: TextOverflow.fade,
-
-                                                      snapshot.data![index].description.toString(),  style: TextStyle(fontSize: 16, ),),
-                                                  ),
-                                                  Text(snapshot.data![index].time.toString(),  style: TextStyle(color: Colors.black45 ),),
-
-                                                ],
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    );
-                                  }
-                                  else{
-                                    return InkWell(
-                                      onTap: () {
-                                        Navigator.push(context,
-                                            MaterialPageRoute(builder: (context) =>
-                                                Note_screen(id:
-                                                int.parse(snapshot.data![index].id.toString()),
-                                                    time: snapshot.data![index].time
-                                                        .toString(),
-                                                    description: snapshot.data![index]
-                                                        .description.toString(),
-                                                    title: snapshot.data![index].title
-                                                        .toString())));
-                                      },
-                                      child: Dismissible(
-                                        key: UniqueKey(),
-                                        onDismissed: (direction) {
-
-                                          dbHelper!.delete(id!);
-
-
-                                        },
-                                        background: Container(
-                                          color: Colors.grey,
-                                          child: Icon(Icons.delete),
-                                        ),
-                                        child: Card(
-                                          color: Colors.green.shade300,
-                                          child: Container(
-                                            height: MediaQuery.of(context).size.height * 0.13,
-                                            width:  MediaQuery.of(context).size.height * 1,
-                                            decoration: BoxDecoration(
-                                                color: Colors.green.shade300,
-                                                borderRadius: BorderRadius.circular(20)
-                                            ),
-                                            child: Padding(
-                                              padding: const EdgeInsets.all(10.0),
-                                              child: Column(
-                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                crossAxisAlignment: CrossAxisAlignment.start,
-                                                children: [
-
-                                                  Container(
-                                                    height: MediaQuery.of(context).size.height * 0.03,
-
-                                                    child: Text(
-                                                      overflow: TextOverflow.ellipsis,
-
-                                                      snapshot.data![index].title.toString(), style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),),
-                                                  ),
-                                                  Container(
-                                                    height: MediaQuery.of(context).size.height * 0.03,
-
-                                                    child: Text(
-                                                      overflow: TextOverflow.ellipsis,
-
-                                                      snapshot.data![index].description.toString(),  style: TextStyle(fontSize: 16, ),),
-                                                  ),
-                                                  Text(snapshot.data![index].time.toString(),  style: TextStyle(color: Colors.black45 ),),
-
-                                                ],
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    );
-                                  }
+                                  return InkWell(
+                                    onTap: () {
+                                      Navigator.pushReplacement(context,
+                                          MaterialPageRoute(builder: (context) =>
+                                              Note_screen(id:
+                                              int.parse(id.toString()),
+                                                  time: time,
+                                                  description: des,
+                                                  title: title)));
+                                    },
+                                    child: Reusable(id: id!, title: title, time: time, description: des),
+                                  );
                                 }
 
                                 return Container();
@@ -464,12 +221,81 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
         floatingActionButton: FloatingActionButton(
           onPressed: () {
-            Navigator.push(context, MaterialPageRoute(builder: (context) => AddNote()));
+            Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => AddNote()));
           },
           backgroundColor: Colors.grey,
           child: Icon(Icons.add, size: 40,
               ),
         )
+    );
+  }
+}
+
+
+
+class Reusable extends StatelessWidget {
+ final int id;
+  final String title, time, description;
+   Reusable({Key? key, required this.id, required this.title, required this.time, required this.description}) : super(key: key);
+  DBhelper? dbHelper = DBhelper();
+
+  @override
+  Widget build(BuildContext context) {
+    return Dismissible(
+      key: UniqueKey(),
+      onDismissed: (direction) {
+
+        dbHelper!.delete(id!);
+
+
+      },
+      background: Container(
+
+        child: Icon(Icons.delete),
+        decoration: BoxDecoration(
+            color: Colors.grey,
+            borderRadius: BorderRadius.circular(20)
+        ),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 5.0),
+        child: Container(
+          height: MediaQuery.of(context).size.height * 0.13,
+          width:  MediaQuery.of(context).size.height * 1,
+          decoration: BoxDecoration(
+              color: Colors.grey.shade300,
+              borderRadius: BorderRadius.circular(20)
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+
+                Container(
+                  height: MediaQuery.of(context).size.height * 0.025,
+
+                  child: Text(
+                    overflow: TextOverflow.ellipsis,
+
+                   title, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.black),),
+                ),
+                Container(
+                  height: MediaQuery.of(context).size.height * 0.020,
+
+                  child: Text(
+                    overflow: TextOverflow.ellipsis,
+
+                    description,  style: TextStyle(fontSize: 16,color: Colors.black ),),
+                ),
+                Text(time,  style: TextStyle(color: Colors.black45 ),),
+
+              ],
+            ),
+          ),
+        ),
+      ),
     );
   }
 }
