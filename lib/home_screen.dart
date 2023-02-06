@@ -1,14 +1,15 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:notepad/Utility/Utility.dart';
 import 'package:notepad/add_note.dart';
 import 'package:notepad/note_screen.dart';
-import 'package:notepad/theme_change_provider.dart';
+import 'package:notepad/Utility/theme_change_provider.dart';
 import 'package:provider/provider.dart';
 
-import 'db_helper.dart';
-import 'note_provider.dart';
-import 'notes_model.dart';
+import 'Utility/db_helper.dart';
+import 'Utility/note_provider.dart';
+import 'Utility/notes_model.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -172,21 +173,22 @@ class _HomeScreenState extends State<HomeScreen> {
                                 String title = snapshot.data![index].title.toString();
                                 String des = snapshot.data![index].description.toString();
                                 String time = snapshot.data![index].time.toString();
+                                var byte = snapshot.data![index].picture;
                                 String all = title + des;
                                 var id = snapshot.data![index].id;
                                 if(searchcontroller.text.isEmpty)
                                   {
                                     return InkWell(
                                       onTap: () {
-                                        Navigator.pushReplacement(context,
+                                        Navigator.push(context,
                                             MaterialPageRoute(builder: (context) =>
                                                 Note_screen(id:
                                                 int.parse(id.toString()),
                                                     time: time,
                                                     description: des,
-                                                    title: title)));
+                                                    title: title, bytes: snapshot.data![index].picture,)));
                                       },
-                                      child: Reusable(id: id!, title: title, time: time, description: des),
+                                      child: Reusable(id: id!, title: title, time: time, description: des, byte: byte,),
                                     );
 
                                   }else if (all.toLowerCase().contains(searchcontroller.text.toLowerCase())){
@@ -198,9 +200,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                               int.parse(id.toString()),
                                                   time: time,
                                                   description: des,
-                                                  title: title)));
+                                                  title: title, bytes: null,)));
                                     },
-                                    child: Reusable(id: id!, title: title, time: time, description: des),
+                                    child: Reusable(id: id!, title: title, time: time, description: des, byte: byte,),
                                   );
                                 }
 
@@ -221,7 +223,7 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
         floatingActionButton: FloatingActionButton(
           onPressed: () {
-            Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => AddNote()));
+            Navigator.push(context, MaterialPageRoute(builder: (context) => AddNote()));
           },
           backgroundColor: Colors.grey,
           child: Icon(Icons.add, size: 40,
@@ -235,8 +237,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
 class Reusable extends StatelessWidget {
  final int id;
+ var byte;
   final String title, time, description;
-   Reusable({Key? key, required this.id, required this.title, required this.time, required this.description}) : super(key: key);
+   Reusable({Key? key, required this.id, required this.byte,required this.title, required this.time, required this.description}) : super(key: key);
   DBhelper? dbHelper = DBhelper();
 
   @override
@@ -245,7 +248,12 @@ class Reusable extends StatelessWidget {
       key: UniqueKey(),
       onDismissed: (direction) {
 
-        dbHelper!.delete(id!);
+        dbHelper!.delete(id).then((value) {
+          final snackBar = SnackBar(backgroundColor: Colors.red ,content: Text('Deleted'.toString()), duration: Duration(seconds: 1));
+
+          ScaffoldMessenger.of(context).showSnackBar(snackBar);
+        });
+
 
 
       },
@@ -268,28 +276,38 @@ class Reusable extends StatelessWidget {
           ),
           child: Padding(
             padding: const EdgeInsets.all(10.0),
-            child: Column(
+            child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
 
-                Container(
-                  height: MediaQuery.of(context).size.height * 0.025,
+                    Container(
+                      height: MediaQuery.of(context).size.height * 0.025,
+                      width: MediaQuery.of(context).size.width * 0.5,
+                      child: Text(
+                        overflow: TextOverflow.ellipsis,
 
-                  child: Text(
-                    overflow: TextOverflow.ellipsis,
+                       title, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.black),),
+                    ),
+                    Container(
+                      height: MediaQuery.of(context).size.height * 0.020,
+                      width: MediaQuery.of(context).size.width * 0.5,
 
-                   title, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.black),),
+                      child: Text(
+                        overflow: TextOverflow.ellipsis,
+
+                        description,  style: TextStyle(fontSize: 16,color: Colors.black ),),
+                    ),
+                    Text(time,  style: TextStyle(color: Colors.black45 ),),
+
+                  ],
                 ),
-                Container(
-                  height: MediaQuery.of(context).size.height * 0.020,
-
-                  child: Text(
-                    overflow: TextOverflow.ellipsis,
-
-                    description,  style: TextStyle(fontSize: 16,color: Colors.black ),),
-                ),
-                Text(time,  style: TextStyle(color: Colors.black45 ),),
+                byte != null ?  Builder(builder: (BuildContext context){
+                  return Utility.imageFromBase64String(byte);
+                }) : Container()
 
               ],
             ),

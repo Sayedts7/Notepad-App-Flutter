@@ -1,13 +1,21 @@
-import 'package:flutter/material.dart';
-import 'package:notepad/home_screen.dart';
+import 'dart:convert';
+import 'dart:io';
 
-import 'db_helper.dart';
-import 'notes_model.dart';
+import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:notepad/home_screen.dart';
+import 'package:notepad/share_screen.dart';
+import 'package:notepad/share_preview.dart';
+
+import 'Utility/Utility.dart';
+import 'Utility/db_helper.dart';
+import 'Utility/notes_model.dart';
 
 class Note_screen extends StatefulWidget {
   final int id;
+  var bytes;
  final String title, description, time;
-  const Note_screen({Key? key, required this.id, required this.time, required this.description, required this.title}) : super(key: key);
+   Note_screen({Key? key, required this.id,required this.bytes, required this.time, required this.description, required this.title}) : super(key: key);
 
   @override
   State<Note_screen> createState() => _Note_screenState();
@@ -19,10 +27,30 @@ class _Note_screenState extends State<Note_screen> {
   TextEditingController titlecontroller = TextEditingController();
   TextEditingController descriptioncontroller = TextEditingController();
 
-
   late bool save;
   @override
   DBhelper? dbHelper = DBhelper();
+
+  File? _image;
+  var pickedFile;
+  var byte;
+  final picker = ImagePicker();
+  Future getGalleryImage()async{
+    pickedFile = await picker.pickImage(source: ImageSource.gallery, imageQuality: 80);
+    setState(() {
+      if(pickedFile != null){
+
+        _image = File(pickedFile.path);
+      print(byte);
+      }else{
+      print('No image selected');
+      }
+    });
+    setState(() async{
+      byte = Utility.base64String(await _image!.readAsBytes());
+
+    });
+  }
 
   @override
   void initState() {
@@ -38,6 +66,10 @@ class _Note_screenState extends State<Note_screen> {
       appBar: AppBar(
         title: const Text('Note'),
         actions: [
+          IconButton(onPressed: (){
+            Navigator.push(context, MaterialPageRoute(builder: (context)=> Screenshot_Share(title: widget.title, des: widget.description, bytes: widget.bytes,)));
+          }, icon: Icon(Icons.share)),
+
           save  ?
           IconButton(onPressed: () {
             dbHelper!.delete(widget.id).then((value) {
@@ -46,7 +78,8 @@ class _Note_screenState extends State<Note_screen> {
               ScaffoldMessenger.of(context).showSnackBar(snackBar);
               Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=> HomeScreen()));
             });
-          }, icon: Icon(Icons.delete),) :
+            }, icon: Icon(Icons.delete),)
+              :
           IconButton(onPressed: () {
             dbHelper!.delete(widget.id).then((value) {
               dbHelper!.insert(
@@ -54,7 +87,7 @@ class _Note_screenState extends State<Note_screen> {
                       id: int.parse(id),
                       title: titlecontroller.text.isEmpty ? '' : titlecontroller.text,
                       time: DateTime.now().toString(),
-                      description: descriptioncontroller.text, picture: '')
+                      description: descriptioncontroller.text, picture:byte!= null ?byte : widget.bytes )
               ).then((value){
                 const snackBar = SnackBar(backgroundColor: Colors.green,content: Text('Saved'), duration: Duration(seconds: 1),);
                 Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>HomeScreen()));
@@ -106,7 +139,7 @@ class _Note_screenState extends State<Note_screen> {
                       border: InputBorder.none
                   ),
                 ),
-
+                Divider(),
 
                 TextFormField(
                   controller: descriptioncontroller,
@@ -128,14 +161,55 @@ class _Note_screenState extends State<Note_screen> {
                       border: InputBorder.none
                   ),
                 ),
+               // Builder(builder: (BuildContext context){
+               //   return Utility.imageFromBase64String(widget.bytes);
+               // }),
+                Divider(),
+                InkWell(
+                  onTap: (){
+                    getGalleryImage();
+                    setState(() {
+                      save = false;
+                    });
+                  },
+                  child: widget.bytes != null ? Center(
+                    child: Container(
+                      height: 400,
+                      width: 400,
+                      // child: Image.asset(bytes),
+                      child:_image!= null ? Image.file(_image!.absolute) : Builder(builder: (BuildContext context){
+                        return Utility.imageFromBase64String(widget.bytes);
+                      }),
 
+                      // return Utility.imageFromBase64String(photo.photoName ?? "");
 
+                    ),
+                  ) : Center(
+                    child: Container(
+                      height: 400,
+                      width: 400,
+
+                      // child: Image.asset(bytes),
+                      child:_image!= null ? Image.file(_image!.absolute) : Icon(Icons.image),
+                      // return Utility.imageFromBase64String(photo.photoName ?? "");
+
+                    ),
+                  ),
+                ),
 
               ],
             ),
           ),
         ),
       ),
+        // floatingActionButton: FloatingActionButton(
+        //   onPressed: () {
+        //     Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Screenshot_Share(title: widget.title , des: widget.description, bytes: widget.bytes, )));
+        //   },
+        //   backgroundColor: Colors.grey,
+        //   child: Icon(Icons.add, size: 40,
+        //   ),
+        // )
     );
   }
 }

@@ -1,5 +1,5 @@
 import 'package:flutter/cupertino.dart';
-import 'package:notepad/notes_model.dart';
+import 'package:notepad/Utility/notes_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'db_helper.dart';
