@@ -186,7 +186,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                 int.parse(id.toString()),
                                                     time: time,
                                                     description: des,
-                                                    title: title, bytes: snapshot.data![index].picture,)));
+                                                    title: title, bytes: snapshot.data![index].picture, idForNotf: index,)));
                                       },
                                       child: Reusable(id: id!, title: title, time: time, description: des, byte: byte,),
                                     );
@@ -200,7 +200,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                               int.parse(id.toString()),
                                                   time: time,
                                                   description: des,
-                                                  title: title, bytes: null,)));
+                                                  title: title, bytes: null, idForNotf: index,)));
                                     },
                                     child: Reusable(id: id!, title: title, time: time, description: des, byte: byte,),
                                   );
@@ -305,9 +305,13 @@ class Reusable extends StatelessWidget {
 
                   ],
                 ),
-                byte != null ?  Builder(builder: (BuildContext context){
-                  return Utility.imageFromBase64String(byte);
-                }) : Container()
+                Container(
+                  width: MediaQuery.of(context).size.width * 0.2,
+
+                  child: byte != null ?  Builder(builder: (BuildContext context){
+                    return Utility.imageFromBase64String(byte);
+                  }) : Container(),
+                )
 
               ],
             ),

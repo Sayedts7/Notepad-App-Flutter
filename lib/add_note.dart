@@ -1,11 +1,13 @@
 import 'dart:io';
 import 'dart:ui';
 
+import 'package:datetime_picker_formfield_new/datetime_picker_formfield_new.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:notepad/Utility/db_helper.dart';
 import 'package:notepad/Utility/notes_model.dart';
-
+import 'package:intl/intl.dart';
+import 'package:notepad/test%202.dart';
 import 'Utility/Utility.dart';
 import 'home_screen.dart';
 
@@ -18,10 +20,48 @@ class AddNote extends StatefulWidget {
 
 class _AddNoteState extends State<AddNote> {
 
+  DateTime selectedDate = DateTime.now();
+  DateTime fullDate = DateTime.now();
+  String now = DateFormat.yMMMMd().add_Hms().format(DateTime.now());
+
+  int id = DateTime.now().millisecondsSinceEpoch;
+  Future<DateTime> _selectDate(BuildContext context) async {
+    final date = await showDatePicker(
+        context: context,
+        firstDate: DateTime(1900),
+        initialDate: selectedDate,
+        lastDate: DateTime(2100));
+    if (date != null) {
+      final time = await showTimePicker(
+        context: context,
+        initialTime: TimeOfDay.fromDateTime(selectedDate),
+      );
+      if (time != null) {
+        setState(() {
+          fullDate = DateTimeField.combine(date, time);
+          final snackBar = SnackBar(backgroundColor: Colors.green ,content: Text('Reminder added'), duration: Duration(seconds: 1));
+
+          ScaffoldMessenger.of(context).showSnackBar(snackBar);
+        });
+        //TODO
+        //schedule a notification
+
+        await _notificationService.scheduleNotifications(
+            id: id,
+            title: titlecontroller.text!,
+            body: descriptioncontroller.text!,
+            time: fullDate);
+      }
+      return DateTimeField.combine(date, time);
+    } else {
+      return selectedDate;
+    }
+  }
+  final NotificationService _notificationService = NotificationService();
   var image ;
   var bytes;
 
-  var id = DateTime.now().millisecondsSinceEpoch.toString();
+
   TextEditingController titlecontroller = TextEditingController();
   TextEditingController descriptioncontroller = TextEditingController();
 
@@ -54,30 +94,51 @@ class _AddNoteState extends State<AddNote> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Note'),
+        title:  Text('Note'),
         actions: [
           IconButton(onPressed: () {
             dbHelper!.insert(
             Note(
-                id: int.parse(id),
-                title: titlecontroller.text.isEmpty ? '' : titlecontroller.text,
-                time: DateTime.now().toString(),
-                description: descriptioncontroller.text, picture: bytes ?? null)
-          ).then((value){
-                final snackBar = SnackBar(backgroundColor: Colors.green,content: Text('Saved'), duration: Duration(seconds: 1),);
-                Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>HomeScreen()));
-                setState(() {
+                id: id,
+                title:  titlecontroller.text ,
 
+                time: now,
+                description: descriptioncontroller.text,
+                picture: bytes ?? null)
+          ).then((value){
+
+                const snackBar = SnackBar(
+                  backgroundColor: Colors.green,
+                  content: Text('Saved'),
+                  duration: Duration(seconds: 1),);
+                Navigator.pushReplacement(
+                    context, MaterialPageRoute(
+                    builder: (context)=>HomeScreen()));
+                setState(() {
                 });
                 ScaffoldMessenger.of(context).showSnackBar(snackBar);
             }).onError((error, stackTrace) {
               print("error"+error.toString());
-              final snackBar = SnackBar(backgroundColor: Colors.red ,content: Text(error.toString()), duration: Duration(seconds: 1));
+              final snackBar = SnackBar(backgroundColor: Colors.red ,content: Text(error.toString()), duration: const Duration(seconds: 1));
 
               ScaffoldMessenger.of(context).showSnackBar(snackBar);
             });
           }, icon: Icon(Icons.save_alt),)
         ],
+      ),
+      bottomNavigationBar: BottomAppBar(
+        child: Container(
+          width: MediaQuery.of(context).size.width * 1,
+          height: MediaQuery.of(context).size.height * 0.1,
+          color: Colors.grey.shade300,
+          child: Center(
+            child: IconButton(
+              onPressed: (){
+                _selectDate(context);
+                }, icon: const Icon(Icons.add_alert,color: Colors.green,),
+            ),
+          ),
+        ),
       ),
 
       body: SafeArea( 
@@ -90,22 +151,22 @@ class _AddNoteState extends State<AddNote> {
               children: [
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 10.0),
-                  child: Text(DateTime.now().toString(), style: TextStyle(fontSize: 15),),
+                  child: Text(now, style: const TextStyle(fontSize: 15),),
                 ),
 
                 TextFormField(
                   minLines: 1,
                   maxLines: 1000,
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                   controller: titlecontroller,
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                     hintText: 'Title',
                       hintStyle: TextStyle(fontSize: 20, color: Colors.grey,fontWeight: FontWeight.bold),
                       border: InputBorder.none
                   ),
                 ),
 
-                Divider(),
+                const Divider(),
 
                 TextFormField(
                   minLines: 1,
@@ -128,7 +189,7 @@ class _AddNoteState extends State<AddNote> {
                       width: 400,
 
                       // child: Image.asset(bytes),
-                       child:_image!= null ? Image.file(_image!.absolute) : Icon(Icons.image),
+                       child:_image!= null ? Image.file(_image!.absolute) : const Icon(Icons.image),
                         // return Utility.imageFromBase64String(photo.photoName ?? "");
 
                     ),
