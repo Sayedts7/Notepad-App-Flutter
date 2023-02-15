@@ -7,9 +7,9 @@ import 'package:image_picker/image_picker.dart';
 import 'package:notepad/Utility/db_helper.dart';
 import 'package:notepad/Utility/notes_model.dart';
 import 'package:intl/intl.dart';
-import 'package:notepad/test%202.dart';
 import 'Utility/Utility.dart';
 import 'home_screen.dart';
+import 'notification_service.dart';
 
 class AddNote extends StatefulWidget {
   const AddNote({Key? key}) : super(key: key);
@@ -73,9 +73,7 @@ class _AddNoteState extends State<AddNote> {
      setState(() {
        if(pickedFile != null){
          _image = File(pickedFile!.path);
-       //   print('oooooooooooooooooooooooooooooooooooooooooooooooooooooooooo');
-       //   print(_image.toString());
-       // print(bytes);
+
        }else{
        print('No image selected');
        }
@@ -114,8 +112,7 @@ class _AddNoteState extends State<AddNote> {
                 Navigator.pushReplacement(
                     context, MaterialPageRoute(
                     builder: (context)=>HomeScreen()));
-                setState(() {
-                });
+
                 ScaffoldMessenger.of(context).showSnackBar(snackBar);
             }).onError((error, stackTrace) {
               print("error"+error.toString());

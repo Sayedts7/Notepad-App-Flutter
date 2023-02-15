@@ -6,12 +6,11 @@ import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:notepad/home_screen.dart';
 import 'package:notepad/share_preview.dart';
-import 'package:notepad/test%202.dart';
 import 'package:notepad/test%20save.dart';
-import 'package:notepad/test.dart';
 import 'Utility/Utility.dart';
 import 'Utility/db_helper.dart';
 import 'Utility/notes_model.dart';
+import 'notification_service.dart';
 
 class Note_screen extends StatefulWidget {
   final int id, idForNotf;
@@ -273,14 +272,14 @@ class _Note_screenState extends State<Note_screen> {
           ),
         ),
       ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) =>  MyHomePage()));
-          },
-          backgroundColor: Colors.grey,
-          child: const Icon(Icons.add, size: 40,
-          ),
-        )
+        // floatingActionButton: FloatingActionButton(
+        //   onPressed: () {
+        //     Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) =>  MyHomePage()));
+        //   },
+        //   backgroundColor: Colors.grey,
+        //   child: const Icon(Icons.add, size: 40,
+        //   ),
+        // )
     );
   }
 }

@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:notepad/Utility/Utility.dart';
 import 'package:notepad/add_note.dart';
